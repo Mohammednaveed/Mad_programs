@@ -1,0 +1,9 @@
+<?xml version="1.0" ?>
+<records>
+    <weather>
+    <city>Delhi</city>
+    <temp>20</temp>
+    <humidity>19</humidity>
+    </weather>
+
+</records>

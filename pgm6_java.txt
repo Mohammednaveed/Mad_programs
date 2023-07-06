@@ -1,0 +1,82 @@
+package com.example.a3br20cs107_application6;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.ButtonBarLayout;
+
+import android.annotation.SuppressLint;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
+
+import org.json.JSONObject;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
+import java.io.InputStream;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+
+public class MainActivity extends AppCompatActivity {
+    Button xbutton,jbutton;
+    TextView xview,jview;
+
+
+    @SuppressLint("MissingInflatedId")
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        xbutton=(Button) findViewById(R.id.xml_button);
+        jbutton=(Button) findViewById(R.id.json_button);
+        xview=(TextView) findViewById(R.id.pxal);
+        jview=(TextView) findViewById(R.id.pjson);
+    }
+
+    public void parse_xml(View view) {
+        InputStream is=null;
+        try {
+            is=getAssets().open("a.xml");
+            DocumentBuilderFactory dbf=DocumentBuilderFactory.newInstance();
+            DocumentBuilder db=dbf.newDocumentBuilder();
+            Document doc= db.parse(is);
+            doc.normalize();
+            NodeList nl=doc.getElementsByTagName("weather");
+            for (int i=0;i<nl.getLength();i++)
+            {
+                Node node=nl.item(i);
+                if(node.getNodeType()==Node.ELEMENT_NODE)
+                {
+                    Element ele=(Element) node;
+                    xview.setText("CITY:"+ele.getElementsByTagName("city").item(0).getTextContent()+"\n");
+                    xview.append("TEMPERATURE:"+ele.getElementsByTagName("temp").item(0).getTextContent()+"\n");
+                    xview.append("HUMIDITITY:"+ele.getElementsByTagName("humidity").item(0).getTextContent()+"\n");
+                }
+            }
+
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void parse_json(View view) {
+        InputStream is=null;
+        try {
+            is=getAssets().open("a1.json");
+            byte[] data=new byte[is.available()];
+            is.read(data);
+            String str=new String(data);
+            JSONObject jo=new JSONObject(str);
+            JSONObject weather=jo.getJSONObject("weather");
+            jview.setText(("cITY:"+weather.getString("city")+"\n"));
+            jview.append(("TEMPERATURE:"+weather.getString("temp")+"\n"));
+            jview.append(("HUMIDITY:"+weather.getString("humidity")+"\n"));
+
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+}
